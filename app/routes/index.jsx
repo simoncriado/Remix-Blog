@@ -1,17 +1,13 @@
 import { Link, useLoaderData } from "@remix-run/react";
+import { db } from "../services/db";
 
-export const loader = () => {
-  const data = {
-    posts: [
-      {
-        id: 1,
-        title: "Post 1",
-        content: "Lorem ipsum blabla",
-      },
-    ],
+export const loader = async () => {
+  // Server side. Connection to DB and accesing data
+  const posts = await db.post.findMany();
+
+  return {
+    posts,
   };
-
-  return data;
 };
 
 export default function Index() {
@@ -36,8 +32,10 @@ export default function Index() {
 
       {posts.map((post) => (
         <div key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.content}</p>
+          <Link to={`/posts/${post.id}`}>
+            <h2>{post.title}</h2>
+            <p>{post.body}</p>
+          </Link>
         </div>
       ))}
     </div>
